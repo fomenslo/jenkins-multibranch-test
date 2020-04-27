@@ -30,16 +30,15 @@ pipeline {
             echo 'Everything is just fine!'
         }
         unsuccessful {
-        	when { expression { return env.CHANGE_ID != null } }
-        	echo "Pull request was failed! More info: ${env.CHANGE_URL}"
-        }
-        unsuccessful {
-        	when { branch pattern: 'qa|staging', comparator: 'REGEXP' }
-        	echo "QA building is failed."
-        }
-        unsuccessful {
-        	when { branch pattern: '(qa-|staging-|master-)?feature/MS-\\d+', comparator: 'REGEXP' }
-        	echo "Feature building is failed."
+        	script {
+        		if (env.CHANGE_ID != null) {
+        			echo "Pull request was failed! More info: ${env.CHANGE_URL}"
+        		} else if (env.BRANCH_NAME =~ /qa|staging/) {
+        			echo "QA building is failed."
+        		} else if (env.BRANCH_NAME =~ /(qa-|staging-|master-)?feature\/MS-\d+/) {
+        			echo "Feature building is failed."
+        		}
+        	}
         }
     }
 }
