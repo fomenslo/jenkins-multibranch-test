@@ -1,7 +1,7 @@
 pipeline {
 	agent any
 	environment {
-		GIT_VARS = sh(script: 'git --no-pager show -s --format=\'%h|%an|%ae|%s\'', returnStdout: true).trim().split('\\|', 4)
+		GIT_VARS = sh(script: 'git --no-pager show -s --format=\'%h|%an|%ae|%s\'', returnStdout: true).trim()
 		APP_NAME = scm.getUserRemoteConfigs()[0].getUrl().tokenize('/')[3].split("\\.")[0].replace('^ms-', '')
 	}
 	stages {
