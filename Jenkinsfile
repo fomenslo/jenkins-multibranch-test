@@ -26,8 +26,20 @@ pipeline {
 		}
 	}
 	post { 
-        always { 
-            echo 'I will always say Hello again!'
+        success { 
+            echo 'Everything is just fine!'
+        }
+        unsuccessful {
+        	when { expression { return env.CHANGE_ID != null } }
+        	echo "Pull request was failed! More info: ${env.CHANGE_URL}"
+        }
+        unsuccessful {
+        	when { branch pattern: 'qa|staging', comparator: 'REGEXP' }
+        	echo "QA building is failed."
+        }
+        unsuccessful {
+        	when { branch pattern: '(qa-|staging-|master-)?feature/MS-\\d+', comparator: 'REGEXP' }
+        	echo "Feature building is failed."
         }
     }
 }
