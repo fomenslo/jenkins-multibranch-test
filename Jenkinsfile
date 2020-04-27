@@ -25,4 +25,20 @@ pipeline {
 			}
 		}
 	}
+	post { 
+        success { 
+            echo 'Everything is just fine!'
+        }
+        unsuccessful {
+        	script {
+        		if (env.CHANGE_ID != null) {
+        			echo "Pull request was failed! More info: ${env.CHANGE_URL}"
+        		} else if (env.BRANCH_NAME =~ /qa|staging/) {
+        			echo "QA building is failed."
+        		} else if (env.BRANCH_NAME =~ /(qa-|staging-|master-)?feature\/MS-\d+/) {
+        			echo "Feature building is failed."
+        		}
+        	}
+        }
+    }
 }
